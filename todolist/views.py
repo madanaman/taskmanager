@@ -4,18 +4,20 @@ from todolist.models import TaskList
 from todolist.form import TaskForm
 from django.contrib import messages
 from django.core.paginator import Paginator
+from django.contrib.auth.decorators import login_required
 
-# Create your views here.
+@login_required
 def todolist(request):
     if request.method == "POST":
         form = TaskForm(request.POST or None)
         if form.is_valid():
+            form.save(commit=False).manager = request.user
             form.save()
         messages.success(request, ("New task added sucessfully."))
         return redirect('todolist')
 
     else:
-        all_tasks = TaskList.objects.all()
+        all_tasks = TaskList.objects.filter(manager=request.user)
         paginator = Paginator(all_tasks, 5)
         page = request.GET.get('pg')
         all_tasks = paginator.get_page(page)
@@ -32,16 +34,29 @@ def about(request):
     context = {'about_text':"About us Page"}
     return render(request, 'aboutus.html', context)
 
+def index(request):
+    # return HttpResponse("Hi There")
+    context = {'index_text':"Index Page"}
+    return render(request, 'index.html', context)
+
+
+@login_required
 def delete_task(request, task_id):
     task = TaskList.objects.get(pk=task_id)
-    task.delete()
+    if task.manager == request.user:
+        task.delete()
+    else:
+        messages.error(request,("User Not Authorized"))
     return redirect('todolist')
 
+
+@login_required
 def edit_task(request, task_id):
     if request.method == "POST":
         task = TaskList.objects.get(pk=task_id)
         form = TaskForm(request.POST or None, instance=task)
         if form.is_valid():
+            form.save(commit=False).manager = request.user
             form.save()
         messages.success(request, ("Task edited sucessfully."))
         return redirect('todolist')
@@ -50,15 +65,23 @@ def edit_task(request, task_id):
         task_object = TaskList.objects.get(pk=task_id)
         return render(request, 'edit.html', {"task_object": task_object })
 
+@login_required
 def complete_task(request, task_id):
     task = TaskList.objects.get(pk=task_id)
     task.done = True
-    task.save()
+    if task.manager == request.user:
+        task.save()
+    else:
+        messages.error(request,("User Not Authorized"))
     return redirect('todolist')
 
 
+@login_required
 def pending_task(request, task_id):
     task = TaskList.objects.get(pk=task_id)
     task.done = False
-    task.save()
+    if task.manager == request.user:
+        task.save()
+    else:
+        messages.error(request,("User Not Authorized"))
     return redirect('todolist')

@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+    <title>Home Page</title>
+{% endblock title %}
+
+{% block content %}
+    <div class="container">
+        <div class="row mt-5">
+            <div class="col-lg-4">
+                <img class="rounded-lg shadow-sm" src="{% static 'images/task2.jpg' %}" alt="Task image" width="360" height="260">
+            </div>
+            <div class="col-lg-4">
+                <img class="rounded-lg shadow-sm" src="{% static 'images/task2.jpg' %}" alt="Task image" width="360" height="260">
+            </div>
+            <div class="col-lg-4">
+                <img class="rounded-lg shadow-sm" src="{% static 'images/task2.jpg' %}" alt="Task image" width="360" height="260">
+            </div>
+        </div>
+        <div class="row mt-5">
+            <div class="col-md-10 offset-md-1">
+                    <p class="h1 text-primary" align="center">Quick and Easy to use, Anytime Anywhere</p>
+                    <p class="h2 mt-3" align="center">Great planner</p>
+                    <p class="h5 mt-3" align="center">All your task in one single place</p>
+                <center><a href="{% url 'todolist' %}"> <button type="button" class="btn btn-primary btn-lg mt-3 shadow">Let's get started</button></a></center>
+            </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
