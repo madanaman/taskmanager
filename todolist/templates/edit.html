@@ -7,6 +7,7 @@
 {% block content %}
     <div class="container">
         <br>
+        {% if task_object.manager == request.user %}
         <form method="POST" class="row">
             {% csrf_token %}
 
@@ -15,5 +16,8 @@
 
           <button type="submit" class="btn btn-primary col-lg-2">Update Task</button>
         </form>
+        {% else %}
+        <p>User Not Authorized</p>
+        {% endif %}
     </div>
 {% endblock content %}
